@@ -1,0 +1,5 @@
+https://github.com/Abstract-Tech/derex.runner/tarball/master#egg=derex.runner
+jinja2
+pre-commit
+pytest
+pytest.runner

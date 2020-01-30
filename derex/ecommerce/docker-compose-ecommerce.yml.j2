@@ -1,0 +1,20 @@
+version: "3.5"
+
+services:
+  ecommerce:
+    image: derex/ecommerce-ironwood
+    container_name: "{{ project.name}}_ecommerce"
+    environment:
+      API_KEY: "ecommerceapikey"
+      SEARCH_SERVER: "http://elasticsearch:9200"
+    networks:
+      derex:
+
+  ecommerce_worker:
+    image: derex/ecommerce-worker-ironwood
+    container_name: "{{ project.name}}_ecommerce"
+    environment:
+      API_KEY: "ecommerceapikey"
+      SEARCH_SERVER: "http://elasticsearch:9200"
+    networks:
+      derex:
