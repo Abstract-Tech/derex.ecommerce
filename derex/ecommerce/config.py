@@ -5,6 +5,7 @@ from jinja2 import Template
 
 from derex import runner  # type: ignore
 from derex.runner.project import Project
+from derex.runner.utils import abspath_from_egg
 
 
 def generate_local_docker_compose(project: Project) -> Path:
@@ -12,11 +13,18 @@ def generate_local_docker_compose(project: Project) -> Path:
     if not derex_dir.is_dir():
         derex_dir.mkdir()
     local_compose_path = derex_dir / "docker-compose-ecommerce.yml"
-    template_path = Path(
-        pkg_resources.resource_filename(__name__, "docker-compose-ecommerce.yml.j2")
+    template_compose_path = abspath_from_egg(
+        "derex.ecommerce", "derex/ecommerce/docker-compose-ecommerce.yml.j2"
     )
-    tmpl = Template(template_path.read_text())
-    text = tmpl.render(project=project)
+    default_settings_path = abspath_from_egg(
+        "derex.ecommerce", "derex/ecommerce/settings.py"
+    )
+    tmpl = Template(template_compose_path.read_text())
+    text = tmpl.render(
+        project=project,
+        plugins_dirs={},
+        default_settings_path=str(default_settings_path)
+    )
     local_compose_path.write_text(text)
     return local_compose_path
 

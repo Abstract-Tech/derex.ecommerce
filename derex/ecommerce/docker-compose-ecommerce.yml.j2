@@ -3,18 +3,32 @@ version: "3.5"
 services:
   ecommerce:
     image: derex/ecommerce-ironwood
-    container_name: "{{ project.name}}_ecommerce"
+    container_name: "{{ project.name }}_ecommerce"
+    volumes:
+      - {{ default_settings_path }}:/openedx/ecommerce/ecommerce/settings/derex.py
+    {% if project.runmode.value == "debug" -%}
+    command:
+      sh -c 'exec ./manage.py runserver --noreload 0:4900'
+    {% else -%}
+    command:
+      sh -c 'exec gunicorn
+        --bind=0.0.0.0:4900
+        --workers 2
+        --max-requests=1000
+        ecommerce.wsgi:application'
+    {% endif -%}
     environment:
-      API_KEY: "ecommerceapikey"
-      SEARCH_SERVER: "http://elasticsearch:9200"
+      DJANGO_SETTINGS_MODULE: ecommerce.settings.derex
+      MYSQL_DB_NAME: "{{ project.name }}_ecommerce"
+    ports:
+      - 4900:4900
     networks:
       derex:
 
   ecommerce_worker:
     image: derex/ecommerce-worker-ironwood
-    container_name: "{{ project.name}}_ecommerce"
+    container_name: "{{ project.name }}_ecommerce_worker"
     environment:
-      API_KEY: "ecommerceapikey"
-      SEARCH_SERVER: "http://elasticsearch:9200"
+      C_FORCE_ROOT: 1
     networks:
       derex:

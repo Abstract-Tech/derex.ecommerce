@@ -5,7 +5,7 @@ from ecommerce.settings.base import *
 from ecommerce.settings.base import INSTALLED_APPS, MIDDLEWARE_CLASSES, LOGGING, JWT_AUTH
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en")
 
@@ -19,8 +19,8 @@ LOGGING["handlers"]["local"] = {
 }
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
@@ -43,10 +43,10 @@ COMPRESS_OFFLINE = True
 SOCIAL_AUTH_EDX_OIDC_KEY = os.environ.get("SOCIAL_AUTH_EDX_OIDC_KEY", "ecommerce-key")
 SOCIAL_AUTH_EDX_OIDC_SECRET = os.environ.get("SOCIAL_AUTH_EDX_OIDC_SECRET", "ecommerce-secret")
 SOCIAL_AUTH_EDX_OIDC_ID_TOKEN_DECRYPTION_KEY = SOCIAL_AUTH_EDX_OIDC_SECRET
-SOCIAL_AUTH_EDX_OIDC_ISSUER = "http://lms:4700/oauth2"
+SOCIAL_AUTH_EDX_OIDC_ISSUER = "http://localhost:4700/oauth2"
 SOCIAL_AUTH_EDX_OIDC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_ISSUER
 SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_URL_ROOT
-SOCIAL_AUTH_EDX_OIDC_LOGOUT_URL = "http://lms:4700/logout"
+SOCIAL_AUTH_EDX_OIDC_LOGOUT_URL = "http://localhost:4700/logout"
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 
 JWT_AUDIENCE = os.environ.get("JWT_AUDIENCE", "lms-key")
@@ -87,12 +87,14 @@ if "runserver" in sys.argv:
     COMPRESS_ENABLED = False
     COMPRESS_OFFLINE = False
 
-    INSTALLED_APPS.append("debug_toolbar")
-    MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE_CLASSES += ("debug_toolbar.middleware.DebugToolbarMiddleware", )
 
+    INSTALLED_APPS.append("debug_toolbar")
     DEBUG_TOOLBAR_CONFIG = {
-        'SHOW_TOOLBAR_CALLBACK': (lambda __: True),
-        'DISABLE_PANELS': (
-            'debug_toolbar.panels.template.TemplateDebugPanel',
+        "SHOW_TOOLBAR_CALLBACK": (lambda __: True),
+        "DISABLE_PANELS": (
+            "debug_toolbar.panels.template.TemplateDebugPanel",
         ),
     }
+    # Without this debug toolbar urls are not registered...
+    os.environ["ENABLE_DJANGO_TOOLBAR"] = "1"

@@ -36,10 +36,11 @@ RUN ./node_modules/.bin/bower install --allow-root
 RUN sed -i "s/mysql-python==1.2.5/mysqlclient/" requirements/production.txt
 
 # Setup python requirements
+# TODO: Build a different image for development
+RUN pip install -r requirements/dev.txt
 RUN pip install -r requirements.txt
 
 # Collect static assets
-COPY ./settings.py ./ecommerce/settings/derex.py
 ENV DJANGO_SETTINGS_MODULE ecommerce.settings.derex
 RUN ./node_modules/.bin/r.js -o build.js
 RUN make theme_static
