@@ -17,6 +17,11 @@ RUN apk add \
 # https://github.com/gliderlabs/docker-alpine/issues/181
 RUN apk add mariadb-dev
 
+# Copy an already migrated db dump
+# TODO: Remove backup from version control and
+# do this step during CI build
+COPY ./empty_dump.sql.bz2 ./openedx/empty_dump.sql.bz2
+
 RUN mkdir -p /openedx/ecommerce
 WORKDIR /openedx/ecommerce
 RUN wget -O - https://github.com/edx/ecommerce/tarball/open-release/ironwood.master | \
