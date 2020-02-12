@@ -17,7 +17,9 @@ jobs:
           versionSpec: "3.7"
         displayName: "Use Python 3.7"
 
-      - script: pip install -r requirements.txt; pip install -e .
+      - script: |
+          pip3 install -U pip setuptools
+          pip3 install -r requirements.txt . git+https://github.com/Abstract-Tech/pytest-azurepipelines.git
         displayName: "Install dependencies"
 
       - script: ddc-services up -d
@@ -34,6 +36,7 @@ jobs:
           set -ex
           cd tests/fixtures/minimal/
           ddc-project config
+          ddc-project up -d lms ecommerce ecommerce_worker
         displayName: "Start lms and ecommerce"
 
       - script: |
