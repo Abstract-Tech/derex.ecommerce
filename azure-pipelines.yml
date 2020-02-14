@@ -7,20 +7,12 @@ schedules:
     always: true
 
 jobs:
-  - job: SetupAndTest
+  - job: TestMinimal
     timeoutInMinutes: 40
     pool:
       vmImage: "ubuntu-latest"
     steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: "3.7"
-        displayName: "Use Python 3.7"
-
-      - script: |
-          pip3 install -U pip setuptools
-          pip3 install -r requirements.txt . git+https://github.com/Abstract-Tech/pytest-azurepipelines.git
-        displayName: "Install dependencies"
+      - template: azure-pipelines/setup.yml
 
       - script: ddc-services up -d
         displayName: "Start services"
@@ -29,8 +21,9 @@ jobs:
           set -ex
           cd tests/fixtures/minimal/
           derex reset-mysql
+          derex ecommerce reset-mysql
           derex reset-rabbitmq
-        displayName: "Prime Mysql, Rabbitmq and Elasticsearch"
+        displayName: "Prime Mysql and Rabbitmq"
 
       - script: |
           set -ex
@@ -49,4 +42,41 @@ jobs:
           set -ex
           $CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
           $CMD || (sleep 10; $CMD )
-        displayName: 'Curl the ecommerce'
+        displayName: "Curl the ecommerce"
+
+  - job: TestComplete
+    timeoutInMinutes: 40
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - template: azure-pipelines/setup.yml
+
+      - script: ddc-services up -d
+        displayName: "Start services"
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          derex reset-mysql
+          derex ecommerce reset-mysql
+          derex reset-rabbitmq
+        displayName: "Prime Mysql and Rabbitmq"
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          ddc-project config
+          ddc-project up -d lms ecommerce ecommerce_worker
+        displayName: "Start lms and ecommerce"
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          ddc-project logs
+        displayName: "Show logs"
+
+      - script: |
+          set -ex
+          $CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
+          $CMD || (sleep 10; $CMD )
+        displayName: "Curl the ecommerce"

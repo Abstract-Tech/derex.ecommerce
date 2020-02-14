@@ -1,10 +1,6 @@
-import os
+from .derex import *
 
-SERVICE_VARIANT = os.environ["SERVICE_VARIANT"]
-assert SERVICE_VARIANT in ("lms", "cms")
-exec(
-    "from {}.envs.derex.base import *".format(SERVICE_VARIANT), globals(), locals(),
-)
-
-# Id of the site fixture to use, instead of looking up the hostname
-SITE_ID = 1
+# HTTPS = "off"
+# SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
+FEATURES['ENABLE_OAUTH2_PROVIDER'] = True
+OAUTH_OIDC_ISSUER = 'http://localhost:4700/oauth2'
