@@ -41,11 +41,14 @@ RUN pip install -r requirements/dev.txt
 RUN pip install -r requirements.txt
 
 # Collect static assets
-ENV DJANGO_SETTINGS_MODULE ecommerce.settings.derex
+COPY ./assets.py ./ecommerce/settings/assets.py
+ENV DJANGO_SETTINGS_MODULE ecommerce.settings.assets
 RUN ./node_modules/.bin/r.js -o build.js
-RUN make theme_static
+RUN python manage.py update_assets --skip-collect
 RUN python manage.py collectstatic --noinput
 RUN python manage.py compress --force
+
+RUN mkdir -p /openedx/themes
 
 # Setup minimal yml config file, which is required by production settings
 RUN echo "{}" > /openedx/config.yml
