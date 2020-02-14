@@ -38,7 +38,7 @@ setup(
     entry_points={
         "derex.runner": ["demo=derex.ecommerce.config:EcommerceService"],
         "derex.runner.cli_plugins": [
-            "reset-mysql-ecommerce=derex.ecommerce.cli:reset_mysql_cmd"
+            "ecommerce=derex.ecommerce.cli:ecommerce"
         ],
     },
     install_requires=requirements,

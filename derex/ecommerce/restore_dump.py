@@ -13,7 +13,6 @@ FIXTURES_DIR = path("/openedx/fixtures/")
 
 
 def get_dump_file_contents():
-    print('Reading dump file "{}"'.format(DUMP_FILE_PATH))
     return bz2.BZ2File(DUMP_FILE_PATH).read()
 
 
@@ -41,6 +40,7 @@ def restore_dump():
     )
     sql = get_dump_file_contents()
     cursor = get_connection().cursor()
+    print('Loading dump file "{}"'.format(DUMP_FILE_PATH))
     cursor.execute(sql)
 
 
