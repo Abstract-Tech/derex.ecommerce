@@ -6,7 +6,7 @@ include README.rst
 
 include derex/ecommerce/docker-compose-ecommerce.yml.j2
 
-include derex/ecommerce/* *.py
+recursive-include derex/ecommerce/ * *.py
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

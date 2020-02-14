@@ -5,7 +5,16 @@ services:
     image: derex/ecommerce-ironwood
     container_name: "{{ project.name }}_ecommerce"
     volumes:
-      - {{ default_settings_path }}:/openedx/ecommerce/ecommerce/settings/derex.py
+      - {{ settings_dir }}:/openedx/ecommerce/ecommerce/settings/derex_project
+      {%- if plugins_dirs.get("requirements") %}
+      - {{ plugins_dirs.get("requirements") }}:/openedx/derex.requirements
+      {% endif %}
+      {%- if plugins_dirs.get("fixtures") %}
+      - {{ plugins_dirs.get("fixtures") }}:/openedx/fixtures
+      {% endif %}
+      {%- if plugins_dirs.get("themes") %}
+      - {{ plugins_dirs.get("themes") }}:/openedx/themes
+      {% endif %}
     {% if project.runmode.value == "debug" -%}
     command:
       sh -c 'exec ./manage.py runserver --noreload 0:4900'
@@ -18,7 +27,7 @@ services:
         ecommerce.wsgi:application'
     {% endif -%}
     environment:
-      DJANGO_SETTINGS_MODULE: ecommerce.settings.derex
+      DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ current_settings }}
       MYSQL_DB_NAME: "{{ project.name }}_ecommerce"
     ports:
       - 4900:4900

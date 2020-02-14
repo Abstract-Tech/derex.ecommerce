@@ -1,8 +1,11 @@
+# type: ignore
+# flake8: noqa
+
 import os
 import sys
 
 from ecommerce.settings.base import *
-from ecommerce.settings.base import INSTALLED_APPS, MIDDLEWARE_CLASSES, LOGGING, JWT_AUTH
+from ecommerce.settings.base import INSTALLED_APPS, MIDDLEWARE_CLASSES, LOGGING, JWT_AUTH, COMPREHENSIVE_THEME_DIRS
 
 
 ALLOWED_HOSTS = ["*"]
@@ -37,6 +40,7 @@ DATABASES = {
     }
 }
 
+COMPREHENSIVE_THEME_DIRS.append("/openedx/themes/")
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
 
@@ -44,8 +48,8 @@ SOCIAL_AUTH_EDX_OIDC_KEY = os.environ.get("SOCIAL_AUTH_EDX_OIDC_KEY", "ecommerce
 SOCIAL_AUTH_EDX_OIDC_SECRET = os.environ.get("SOCIAL_AUTH_EDX_OIDC_SECRET", "ecommerce-secret")
 SOCIAL_AUTH_EDX_OIDC_ID_TOKEN_DECRYPTION_KEY = SOCIAL_AUTH_EDX_OIDC_SECRET
 SOCIAL_AUTH_EDX_OIDC_ISSUER = "http://localhost:4700/oauth2"
-SOCIAL_AUTH_EDX_OIDC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_ISSUER
-SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_URL_ROOT
+SOCIAL_AUTH_EDX_OIDC_URL_ROOT = "http://lms:4700/oauth2"
+SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT = "http://localhost:4700/oauth2"
 SOCIAL_AUTH_EDX_OIDC_LOGOUT_URL = "http://localhost:4700/logout"
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 

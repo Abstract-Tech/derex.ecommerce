@@ -1,29 +1,68 @@
+import logging
 import pkg_resources
 from typing import List, Dict, Union
 from pathlib import Path
 from jinja2 import Template
 
 from derex import runner  # type: ignore
-from derex.runner.project import Project
+from derex.runner.project import Project, SettingsModified
 from derex.runner.utils import abspath_from_egg
 
 
+logger = logging.getLogger(__name__)
+
+
 def generate_local_docker_compose(project: Project) -> Path:
-    derex_dir = project.root / ".derex"
-    if not derex_dir.is_dir():
-        derex_dir.mkdir()
-    local_compose_path = derex_dir / "docker-compose-ecommerce.yml"
+    local_compose_path = project.private_filepath("docker-compose-ecommerce.yml")
     template_compose_path = abspath_from_egg(
         "derex.ecommerce", "derex/ecommerce/docker-compose-ecommerce.yml.j2"
     )
-    default_settings_path = abspath_from_egg(
-        "derex.ecommerce", "derex/ecommerce/settings.py"
-    )
+    plugin_directories = project.get_plugin_directories(__package__)
+    our_settings_dir = abspath_from_egg(
+        "derex.ecommerce", "derex/ecommerce/settings/README.rst"
+    ).parent
+
+    settings_dir = our_settings_dir / "derex"
+    current_settings = "base"
+
+    if plugin_directories.get("settings"):
+        settings_dir = plugin_directories.get("settings")
+
+        if (plugin_directories.get("settings") / project.settings.name).exists():
+            current_settings = project.settings.name
+        else:
+            logger.warning(
+                f"{project.settings.name} settings module not found for {__package__} plugin. "
+                "Running with default settings."
+            )
+
+        # Write out default read-only settings file
+        # if they are not present
+        base_settings = settings_dir / "base.py"
+        if not base_settings.is_file():
+            base_settings.write_text("from .derex import *\n")
+
+        init = settings_dir / "__init__.py"
+        if not init.is_file():
+            init.write_text('"""Settings for edX Ecommerce Service"""')
+
+        for source_code in our_settings_dir.glob("**/*.py"):
+            destination = settings_dir / source_code.relative_to(our_settings_dir)
+            if destination.is_file():
+                if destination.read_text() != source_code.read_text():
+                    raise SettingsModified(filename=destination)
+            else:
+                if not destination.parent.is_dir():
+                    destination.parent.mkdir(parents=True)
+                destination.write_text(source_code.read_text())
+                destination.chmod(0o444)
+
     tmpl = Template(template_compose_path.read_text())
     text = tmpl.render(
         project=project,
-        plugins_dirs={},
-        default_settings_path=str(default_settings_path)
+        plugins_dirs=plugin_directories,
+        settings_dir=settings_dir,
+        current_settings=current_settings
     )
     local_compose_path.write_text(text)
     return local_compose_path
