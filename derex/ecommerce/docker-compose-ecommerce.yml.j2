@@ -27,12 +27,22 @@ services:
         ecommerce.wsgi:application'
     {% endif -%}
     environment:
-      DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ current_settings }}
+      DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ active_settings }}
       MYSQL_DB_NAME: "{{ project.name }}_ecommerce"
     ports:
       - 4900:4900
     networks:
       derex:
+
+
+# Since the Ecommerce Service doesn't allow to specificy an internal URL
+# to use in server to server communications we are forced to create an alias
+# for the LMS hostname
+  lms:
+    networks:
+      derex:
+        aliases:
+          - lms.localhost
 
   ecommerce_worker:
     image: derex/ecommerce-worker-ironwood

@@ -1,18 +1,18 @@
 import logging
-import pkg_resources
-from typing import List, Dict, Union
 from pathlib import Path
-from jinja2 import Template
+from typing import Dict, List, Union
 
 from derex import runner  # type: ignore
 from derex.runner.project import Project, SettingsModified
 from derex.runner.utils import abspath_from_egg
-
+from jinja2 import Template
 
 logger = logging.getLogger(__name__)
 
 
 def generate_local_docker_compose(project: Project) -> Path:
+    """TODO: Interim function waiting to be refactored into derex.runner
+    """
     local_compose_path = project.private_filepath("docker-compose-ecommerce.yml")
     template_compose_path = abspath_from_egg(
         "derex.ecommerce", "derex/ecommerce/docker-compose-ecommerce.yml.j2"
@@ -23,13 +23,13 @@ def generate_local_docker_compose(project: Project) -> Path:
     ).parent
 
     settings_dir = our_settings_dir / "derex"
-    current_settings = "base"
+    active_settings = "base"
 
     if plugin_directories.get("settings"):
         settings_dir = plugin_directories.get("settings")
 
         if (plugin_directories.get("settings") / project.settings.name).exists():
-            current_settings = project.settings.name
+            active_settings = project.settings.name
         else:
             logger.warning(
                 f"{project.settings.name} settings module not found for {__package__} plugin. "
@@ -62,7 +62,7 @@ def generate_local_docker_compose(project: Project) -> Path:
         project=project,
         plugins_dirs=plugin_directories,
         settings_dir=settings_dir,
-        current_settings=current_settings
+        active_settings=active_settings,
     )
     local_compose_path.write_text(text)
     return local_compose_path

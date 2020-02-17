@@ -1,6 +1,4 @@
-from .derex import *
+from .derex import *  # type: ignore # noqa
 
-# HTTPS = "off"
-# SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
-FEATURES['ENABLE_OAUTH2_PROVIDER'] = True
-OAUTH_OIDC_ISSUER = 'http://localhost:4700/oauth2'
+FEATURES["ENABLE_OAUTH2_PROVIDER"] = True  # type: ignore # noqa
+OAUTH_OIDC_ISSUER = "http://lms.localhost:4700/oauth2"

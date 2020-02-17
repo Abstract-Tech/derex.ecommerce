@@ -5,11 +5,11 @@
     "fields": {
         "site": 1,
         "partner": 1,
-        "lms_url_root": "http://localhost:4700",
+        "lms_url_root": "http://lms.localhost:4700",
         "theme_scss_path": null,
         "payment_processors": "paypal",
         "client_side_payment_processor": null,
-        "oauth_settings": "{\"SOCIAL_AUTH_EDX_OIDC_SECRET\":\"lms-secret\",\"SOCIAL_AUTH_EDX_OIDC_ISSUERS\":[\"http://localhost:4700\"],\"SOCIAL_AUTH_EDX_OIDC_ID_TOKEN_DECRYPTION_KEY\":\"lms-secret\",\"SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT\":\"http://localhost:4700/oauth2\",\"SOCIAL_AUTH_EDX_OIDC_URL_ROOT\":\"http://lms:4700/oauth2\",\"SOCIAL_AUTH_EDX_OIDC_KEY\":\"lms-key\"}",
+        "oauth_settings": "{\"SOCIAL_AUTH_EDX_OIDC_SECRET\":\"lms-secret\",\"SOCIAL_AUTH_EDX_OIDC_ISSUERS\":[\"http://lms.localhost:4700\"],\"SOCIAL_AUTH_EDX_OIDC_ID_TOKEN_DECRYPTION_KEY\":\"lms-secret\",\"SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT\":\"http://lms.localhost:4700/oauth2\",\"SOCIAL_AUTH_EDX_OIDC_URL_ROOT\":\"http://lms:4700/oauth2\",\"SOCIAL_AUTH_EDX_OIDC_KEY\":\"lms-key\"}",
         "segment_key": null,
         "from_email": "ecommerce@example.com",
         "enable_enrollment_codes": false,
