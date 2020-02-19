@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   ecommerce:
-    image: derex/ecommerce-ironwood
+    image: derex/ecommerce:ironwood
     container_name: "{{ project.name }}_ecommerce"
     volumes:
       - {{ settings_dir }}:/openedx/ecommerce/ecommerce/settings/derex_project
@@ -45,7 +45,7 @@ services:
           - lms.localhost
 
   ecommerce_worker:
-    image: derex/ecommerce-worker-ironwood
+    image: derex/ecommerce-worker:ironwood
     container_name: "{{ project.name }}_ecommerce_worker"
     environment:
       C_FORCE_ROOT: 1
