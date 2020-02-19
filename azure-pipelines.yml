@@ -38,7 +38,7 @@ jobs:
 
       - script: |
           set -ex
-          $CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
+          CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
           $CMD || (sleep 10; $CMD )
         displayName: "Curl the ecommerce"
 
@@ -73,6 +73,6 @@ jobs:
 
       - script: |
           set -ex
-          $CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
+          CMD="curl --connect-timeout 30 --retry 5 --retry-delay 5 -f http://localhost:4900/health/"
           $CMD || (sleep 10; $CMD )
         displayName: "Curl the ecommerce"
