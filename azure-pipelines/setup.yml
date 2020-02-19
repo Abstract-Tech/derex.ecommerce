@@ -8,3 +8,6 @@ steps:
       pip3 install -U pip setuptools
       pip3 install -r requirements_dev.txt . git+https://github.com/Abstract-Tech/pytest-azurepipelines.git
     displayName: 'Install derex.runner'
+
+  - script: ddc-services up -d
+    displayName: "Start services"
