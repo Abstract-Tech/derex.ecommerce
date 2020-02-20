@@ -8,6 +8,8 @@ from ecommerce.settings.base import *
 from ecommerce.settings.base import (COMPREHENSIVE_THEME_DIRS, INSTALLED_APPS,
                                      JWT_AUTH, LOGGING, MIDDLEWARE_CLASSES)
 
+
+# System
 ALLOWED_HOSTS = ["*"]
 TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en")
@@ -36,10 +38,13 @@ DATABASES = {
     }
 }
 
-COMPREHENSIVE_THEME_DIRS.append("/openedx/themes/")
+# Static files
+STATIC_ROOT = "/openedx/staticfiles"
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
+COMPREHENSIVE_THEME_DIRS.append("/openedx/themes/")
 
+# Authentication
 SOCIAL_AUTH_EDX_OIDC_KEY = os.environ.get("SOCIAL_AUTH_EDX_OIDC_KEY", "ecommerce-key")
 SOCIAL_AUTH_EDX_OIDC_SECRET = os.environ.get(
     "SOCIAL_AUTH_EDX_OIDC_SECRET", "ecommerce-secret"
@@ -71,6 +76,7 @@ JWT_AUTH.update(
     }
 )
 
+# Celery
 # In order for tasks to be visible to the ecommerce worker, this must match the value of BROKER_URL
 # configured for the ecommerce worker
 CELERY_BROKER_VHOST = os.environ.get("CELERY_BROKER_VHOST", "/")
@@ -100,3 +106,7 @@ if "runserver" in sys.argv:
     }
     # Without this debug toolbar urls are not registered...
     os.environ["ENABLE_DJANGO_TOOLBAR"] = "1"
+else:
+    MIDDLEWARE_CLASSES += ("whitenoise.middleware.WhiteNoiseMiddleware",)
+
+from .container_env import *  # isort:skip
