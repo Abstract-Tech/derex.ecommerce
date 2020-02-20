@@ -20,7 +20,7 @@ RUN apk add mariadb-dev
 # Copy an already migrated db dump
 # TODO: Remove backup from version control and
 # do this step during CI build
-COPY ./empty_dump.sql.bz2 ./openedx/empty_dump.sql.bz2
+COPY ./empty_dump.sql.bz2 /openedx/empty_dump.sql.bz2
 
 RUN mkdir -p /openedx/ecommerce
 WORKDIR /openedx/ecommerce
@@ -39,6 +39,7 @@ RUN sed -i "s/mysql-python==1.2.5/mysqlclient/" requirements/production.txt
 # TODO: Build a different image for development
 RUN pip install -r requirements/dev.txt
 RUN pip install -r requirements.txt
+RUN pip install whitenoise==4.1.3
 
 # Collect static assets
 COPY ./assets.py ./ecommerce/settings/assets.py
@@ -55,8 +56,9 @@ RUN echo "{}" > /openedx/config.yml
 ENV ECOMMERCE_CFG /openedx/config.yml
 
 EXPOSE 4900
+COPY ./wsgi_whitenoise.py ./ecommerce/wsgi_whitenoise.py
 CMD gunicorn \
     --bind=0.0.0.0:4900 \
     --workers 2 \
     --max-requests=1000 \
-    ecommerce.wsgi:application
+    ecommerce.wsgi_whitenoise:application

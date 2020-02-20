@@ -24,9 +24,10 @@ services:
         --bind=0.0.0.0:4900
         --workers 2
         --max-requests=1000
-        ecommerce.wsgi:application'
+        ecommerce.wsgi_whitenoise:application'
     {% endif -%}
     environment:
+      SERVICE_VARIANT: ecommerce
       DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ active_settings }}
       MYSQL_DB_NAME: "{{ project.name }}_ecommerce"
     ports:
