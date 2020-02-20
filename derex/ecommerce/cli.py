@@ -1,11 +1,11 @@
 import logging
-import click
 import os
-from derex.runner.project import Project, ProjectRunMode
-from derex.runner.utils import abspath_from_egg
-from derex.runner.compose_utils import run_compose
-from derex.runner.cli import ensure_project
 
+import click
+from derex.runner.cli import ensure_project
+from derex.runner.compose_utils import run_compose
+from derex.runner.project import ProjectRunMode
+from derex.runner.utils import abspath_from_egg
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,9 @@ def reset_mysql_cmd(project):
         return
 
     wait_for_mysql()
-    restore_dump_path = abspath_from_egg("derex.ecommerce", "derex/ecommerce/restore_dump.py")
+    restore_dump_path = abspath_from_egg(
+        "derex.ecommerce", "derex/ecommerce/restore_dump.py"
+    )
     run_compose(
         [
             "run",
@@ -46,8 +48,9 @@ def reset_mysql_cmd(project):
             f"{restore_dump_path}:/openedx/ecommerce/restore_dump.py",
             "ecommerce",
             "python",
-            "/openedx/ecommerce/restore_dump.py"
-        ], project=project
+            "/openedx/ecommerce/restore_dump.py",
+        ],
+        project=project,
     )
     return 0
 
@@ -67,7 +70,7 @@ def compile_theme(project):
     if themes_dir is None:
         click.echo("No theme directory present for this plugin")
         return
-    themes = ",".join(el.name for el in themes_dir.iterdir())
+    themes = " ".join(el.name for el in themes_dir.iterdir())
     uid = os.getuid()
     args = [
         "run",
