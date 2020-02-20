@@ -28,7 +28,9 @@ def generate_local_docker_compose(project: Project) -> Path:
     if plugin_directories.get("settings"):
         settings_dir = plugin_directories.get("settings")
 
-        if (plugin_directories.get("settings") / project.settings.name).exists():
+        if (
+            plugin_directories.get("settings") / "{}.py".format(project.settings.name)
+        ).exists():
             active_settings = project.settings.name
         else:
             logger.warning(
