@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from derex import runner  # type: ignore
 from derex.runner.project import Project, SettingsModified
@@ -73,7 +73,9 @@ def generate_local_docker_compose(project: Project) -> Path:
 class EcommerceService:
     @staticmethod
     @runner.hookimpl
-    def local_compose_options(project: Project) -> Dict[str, Union[str, List[str]]]:
+    def local_compose_options(
+        project: Project,
+    ) -> Optional[Dict[str, Union[str, List[str]]]]:
         if "derex.ecommerce" in project.config.get("plugins", {}):
             local_compose_path = generate_local_docker_compose(project)
             options = ["-f", str(local_compose_path)]
@@ -83,4 +85,4 @@ class EcommerceService:
                 "priority": ">base",
                 "variant": "openedx",
             }
-        return {}
+        return None
