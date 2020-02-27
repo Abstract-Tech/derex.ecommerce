@@ -36,10 +36,8 @@ setup(
     ],
     description="Derex Plugin to integrate Open edX Ecommerce",
     entry_points={
-        "derex.runner": ["demo=derex.ecommerce.config:EcommerceService"],
-        "derex.runner.cli_plugins": [
-            "ecommerce=derex.ecommerce.cli:ecommerce"
-        ],
+        "derex.runner": ["ecommerce=derex.ecommerce.config:EcommerceService"],
+        "derex.runner.cli_plugins": ["ecommerce=derex.ecommerce.cli:ecommerce"],
     },
     install_requires=requirements,
     license="GNU General Public License v3",
