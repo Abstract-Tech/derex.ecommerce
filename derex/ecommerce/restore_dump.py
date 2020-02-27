@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-from django.conf import settings
-from path import Path as path
-
-import logging
 import bz2
-import MySQLdb
-import os
 
+import MySQLdb
+from django.conf import settings
 
 DUMP_FILE_PATH = "/openedx/empty_dump.sql.bz2"
-FIXTURES_DIR = path("/openedx/fixtures/")
 
 
 def get_dump_file_contents():
@@ -28,35 +23,16 @@ def get_connection(include_db=True):
     return MySQLdb.connect(**kwargs)
 
 
-def restore_dump():
+def main():
     admin_cursor = get_connection(include_db=False).cursor()
     database_name = settings.DATABASES["default"]["NAME"]
     print('Resetting mysql database "{}"'.format(database_name))
-    admin_cursor.execute(
-        "DROP DATABASE IF EXISTS {}".format(database_name)
-    )
-    admin_cursor.execute(
-        "CREATE DATABASE {} CHARACTER SET utf8".format(database_name)
-    )
+    admin_cursor.execute("DROP DATABASE IF EXISTS {}".format(database_name))
+    admin_cursor.execute("CREATE DATABASE {} CHARACTER SET utf8".format(database_name))
     sql = get_dump_file_contents()
     cursor = get_connection().cursor()
     print('Loading dump file "{}"'.format(DUMP_FILE_PATH))
     cursor.execute(sql)
-
-
-def run_fixtures():
-    if FIXTURES_DIR.isdir():
-        # We sort lexicographically by file name
-        # to make predictable ordering possible
-        for file in sorted(FIXTURES_DIR.listdir()):
-            print('Loading fixture "{}"'.format(file))
-            path("/openedx/ecommerce").chdir()
-            os.system("./manage.py loaddata {}".format(file))
-
-
-def main():
-    restore_dump()
-    run_fixtures()
 
 
 if __name__ == "__main__":

@@ -84,3 +84,32 @@ def compile_theme(project):
     ]
     run_compose(args, project=project)
     return
+
+
+# TODO: Be able to load fixtures selectively
+@ecommerce.command(name="load-fixtures")
+@click.pass_obj
+@ensure_project
+def load_fixtures(project):
+    """Load fixtures from the plugin fixtures directory"""
+    from derex.runner.compose_utils import run_compose
+
+    fixtures_dir = project.get_plugin_directories(__package__).get("fixtures")
+    if fixtures_dir is None:
+        click.echo("No fixtures directory present for this plugin")
+        return
+
+    load_fixtures_path = abspath_from_egg(
+        "derex.ecommerce", "derex/ecommerce/load_fixtures.py"
+    )
+    compose_args = [
+        "run",
+        "--rm",
+        "-v",
+        f"{load_fixtures_path}:/openedx/ecommerce/load_fixtures.py",
+        "ecommerce",
+        "python",
+        "/openedx/ecommerce/load_fixtures.py",
+    ]
+    run_compose(compose_args, project=project)
+    return
