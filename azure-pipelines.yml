@@ -19,6 +19,7 @@ jobs:
           cd tests/fixtures/minimal/
           derex reset-mysql
           derex ecommerce reset-mysql
+          derex ecommerce load-fixtures
           derex reset-rabbitmq
         displayName: "Prime Mysql and Rabbitmq"
 
@@ -54,6 +55,7 @@ jobs:
           cd tests/fixtures/complete/
           derex reset-mysql
           derex ecommerce reset-mysql
+          derex ecommerce load-fixtures
           derex reset-rabbitmq
         displayName: "Prime Mysql and Rabbitmq"
 
