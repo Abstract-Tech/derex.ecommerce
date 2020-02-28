@@ -37,7 +37,16 @@ services:
       - 4900:4900
     networks:
       derex:
+        aliases:
+          - ecommerce.localhost
 
+  ecommerce_worker:
+    image: derex/ecommerce-worker:ironwood
+    container_name: "{{ project.name }}_ecommerce_worker"
+    environment:
+      C_FORCE_ROOT: 1
+    networks:
+      derex:
 
 # Since the Ecommerce Service doesn't allow to specificy an internal URL
 # to use in server to server communications we are forced to create an alias
@@ -48,10 +57,8 @@ services:
         aliases:
           - lms.localhost
 
-  ecommerce_worker:
-    image: derex/ecommerce-worker:ironwood
-    container_name: "{{ project.name }}_ecommerce_worker"
-    environment:
-      C_FORCE_ROOT: 1
+  cms:
     networks:
       derex:
+        aliases:
+          - cms.localhost
