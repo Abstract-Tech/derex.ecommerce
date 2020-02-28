@@ -92,6 +92,9 @@ BROKER_URL = "{0}://{1}:{2}@{3}/{4}".format(
     CELERY_BROKER_VHOST,
 )
 
+# Discovery
+COURSE_CATALOG_API_URL = "http://discovery.localhost:4910/api/v1/"
+
 if "runserver" in sys.argv:
     DEBUG = True
     COMPRESS_ENABLED = False
