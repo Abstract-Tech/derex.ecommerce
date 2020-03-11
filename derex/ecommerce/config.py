@@ -24,6 +24,9 @@ def generate_local_docker_compose(project: Project) -> Path:
 
     settings_dir = our_settings_dir / "derex"
     active_settings = "base"
+    ecommerce_docker_image = project.config.get(
+        "ecommerce_docker_image", "derex/ecommerce:ironwood"
+    )
 
     if plugin_directories.get("settings"):
         settings_dir = plugin_directories.get("settings")
@@ -65,6 +68,7 @@ def generate_local_docker_compose(project: Project) -> Path:
         plugins_dirs=plugin_directories,
         settings_dir=settings_dir,
         active_settings=active_settings,
+        ecommerce_docker_image=ecommerce_docker_image,
     )
     local_compose_path.write_text(text)
     return local_compose_path

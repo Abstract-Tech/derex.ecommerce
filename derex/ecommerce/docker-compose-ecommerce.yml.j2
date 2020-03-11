@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   ecommerce:
-    image: derex/ecommerce:ironwood
+    image: {{ ecommerce_docker_image }}
     container_name: "{{ project.name }}_ecommerce"
     volumes:
       - {{ settings_dir }}:/openedx/ecommerce/ecommerce/settings/derex_project
