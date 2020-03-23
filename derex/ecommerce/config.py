@@ -86,7 +86,7 @@ class EcommerceService:
             return {
                 "options": options,
                 "name": "ecommerce",
-                "priority": ">base",
+                "priority": "<local-derex",
                 "variant": "openedx",
             }
         return None
