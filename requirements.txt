@@ -15,7 +15,7 @@ chardet==3.0.4            # via requests
 click-plugins==1.1.1      # via derex.runner
 click==7.0                # via click-plugins, derex.runner
 cryptography==2.8         # via paramiko
-https://github.com/Abstract-Tech/derex.runner/tarball/master#egg=derex.runner  # via -r requirements.in (line 1)
+https://github.com/Abstract-Tech/derex.runner/tarball/10bd1f34686d7ae1e5ecb7882a10d25de589ee47#egg=derex.runner  # via -r requirements.in (line 1)
 docker-compose==1.25.4    # via derex.runner
 docker[ssh]==4.1.0        # via docker-compose
 dockerpty==0.4.1          # via docker-compose
