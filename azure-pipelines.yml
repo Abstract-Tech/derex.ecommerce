@@ -1,5 +1,5 @@
 schedules:
-  - cron: "30 06 * * *"
+  - cron: "20 06 * * *"
     displayName: Daily build
     branches:
       include:
@@ -7,88 +7,22 @@ schedules:
     always: true
 
 jobs:
-  - job: TestMinimal
-    timeoutInMinutes: 40
-    pool:
-      vmImage: "ubuntu-latest"
-    steps:
-      - template: azure-pipelines/setup.yml
+  - template: azure-pipelines/minimal.yml
+    parameters:
+      JOB_VARIANT: UnPinned
+      PIN_VERSIONS:
 
-      - script: |
-          set -ex
-          cd tests/fixtures/minimal/
-          derex reset-mysql
-          derex ecommerce reset-mysql
-          derex ecommerce load-fixtures
-        displayName: "Prime Mysql"
+  - template: azure-pipelines/minimal.yml
+    parameters:
+      JOB_VARIANT: Pinned
+      PIN_VERSIONS: yes
 
-      - script: |
-          set -ex
-          cd tests/fixtures/minimal/
-          derex runmode production
-          ddc-project config
-          ddc-project up -d lms ecommerce ecommerce_worker
-        displayName: "Start lms and ecommerce"
+  - template: azure-pipelines/complete.yml
+    parameters:
+      JOB_VARIANT: UnPinned
+      PIN_VERSIONS:
 
-      - script: |
-          set -ex
-          cd tests/fixtures/minimal/
-          ddc-project logs
-        displayName: "Show logs"
-
-      - script: |
-          set -ex
-          COUNT=$(
-            curl -sf http://localhost:4900/health/ \
-              --connect-timeout 30 \
-              --retry 5 \
-              --retry-delay 5 \
-              --retry-connrefused | grep -o "OK" | wc -l
-          )
-          if [ $COUNT != 2 ]; then
-              exit 1
-          fi
-        displayName: "Curl the Ecommerce service"
-
-  - job: TestComplete
-    timeoutInMinutes: 40
-    pool:
-      vmImage: "ubuntu-latest"
-    steps:
-      - template: azure-pipelines/setup.yml
-
-      - script: |
-          set -ex
-          cd tests/fixtures/complete/
-          derex reset-mysql
-          derex ecommerce reset-mysql
-          derex ecommerce load-fixtures
-        displayName: "Prime Mysql"
-
-      - script: |
-          set -ex
-          cd tests/fixtures/complete/
-          derex runmode production
-          ddc-project config
-          ddc-project up -d lms ecommerce ecommerce_worker
-        displayName: "Start lms and ecommerce"
-
-      - script: |
-          set -ex
-          cd tests/fixtures/complete/
-          ddc-project logs
-        displayName: "Show logs"
-
-      - script: |
-          set -ex
-          COUNT=$(
-            curl -sf http://localhost:4900/health/ \
-              --connect-timeout 30 \
-              --retry 5 \
-              --retry-delay 5 \
-              --retry-connrefused | grep -o "OK" | wc -l
-          )
-          if [ $COUNT != 2 ]; then
-              exit 1
-          fi
-        displayName: "Curl the Ecommerce service"
+  - template: azure-pipelines/complete.yml
+    parameters:
+      JOB_VARIANT: Pinned
+      PIN_VERSIONS: yes

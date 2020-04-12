@@ -1,0 +1,53 @@
+parameters:
+  - name: JOB_VARIANT
+    type: string
+    default: ""
+  - name: PIN_VERSIONS
+    type: string
+    default: "true"
+
+jobs:
+  - job: Complete${{ parameters.JOB_VARIANT }}
+    timeoutInMinutes: 40
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - template: setup.yml
+        parameters:
+          PIN_VERSIONS: ${{ parameters.PIN_VERSIONS }}
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          derex reset-mysql
+          derex ecommerce reset-mysql
+          derex ecommerce load-fixtures
+        displayName: "Prime Mysql"
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          derex runmode production
+          ddc-project config
+          ddc-project up -d lms ecommerce ecommerce_worker
+        displayName: "Start lms and ecommerce"
+
+      - script: |
+          set -ex
+          cd tests/fixtures/complete/
+          ddc-project logs
+        displayName: "Show logs"
+
+      - script: |
+          set -ex
+          COUNT=$(
+            curl -sf http://localhost:4900/health/ \
+              --connect-timeout 30 \
+              --retry 5 \
+              --retry-delay 5 \
+              --retry-connrefused | grep -o "OK" | wc -l
+          )
+          if [ $COUNT != 2 ]; then
+              exit 1
+          fi
+        displayName: "Curl the Ecommerce service"

@@ -5,8 +5,11 @@ steps:
     displayName: 'Use Python 3.7'
 
   - script: |
+      set -ex
       pip3 install -U pip setuptools
-      pip3 install -r requirements_dev.txt . git+https://github.com/Abstract-Tech/pytest-azurepipelines.git
+      [ -z "${{ parameters.PIN_VERSIONS }}" ] && pip3 install -r requirements_dev.txt .
+      [ ! -z "${{ parameters.PIN_VERSIONS }}" ] && pip3 install . https://github.com/Abstract-Tech/derex.runner/tarball/master#egg=derex.runner
+      true
     displayName: 'Install derex.runner'
 
   - script: ddc-services up -d
