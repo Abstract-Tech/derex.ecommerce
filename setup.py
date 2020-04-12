@@ -7,7 +7,7 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = [
-    "derex.runner @ https://github.com/Abstract-Tech/derex.runner/tarball/master#egg=derex.runner",  # noqa: E501
+    "derex.runner",
     "jinja2",
 ]
 
