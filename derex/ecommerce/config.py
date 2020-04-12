@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from derex import runner  # type: ignore
-from derex.runner.project import Project, SettingsModified
+from derex.runner.project import Project
 from derex.runner.utils import abspath_from_egg
 from jinja2 import Template
 
@@ -53,14 +53,18 @@ def generate_local_docker_compose(project: Project) -> Path:
 
         for source_code in our_settings_dir.glob("**/*.py"):
             destination = settings_dir / source_code.relative_to(our_settings_dir)
-            if destination.is_file():
-                if destination.read_text() != source_code.read_text():
-                    raise SettingsModified(filename=destination)
-            else:
-                if not destination.parent.is_dir():
-                    destination.parent.mkdir(parents=True)
-                destination.write_text(source_code.read_text())
-                destination.chmod(0o444)
+            if (
+                destination.is_file()
+                and destination.read_text() != source_code.read_text()
+            ):
+                # TODO: Replace this warning with a call to a derex.runner
+                # function which should take care of updating settings
+                logger.warning(f"WARNING: Settings modified at {destination}")
+
+            if not destination.parent.is_dir():
+                destination.parent.mkdir(parents=True)
+            destination.write_text(source_code.read_text())
+            destination.chmod(0o444)
 
     tmpl = Template(template_compose_path.read_text())
     text = tmpl.render(
