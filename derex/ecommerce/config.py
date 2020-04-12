@@ -1,4 +1,6 @@
 import logging
+import os
+import stat
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -63,8 +65,15 @@ def generate_local_docker_compose(project: Project) -> Path:
 
             if not destination.parent.is_dir():
                 destination.parent.mkdir(parents=True)
-            destination.write_text(source_code.read_text())
-            destination.chmod(0o444)
+            try:
+                destination.write_text(source_code.read_text())
+            except PermissionError:
+                current_mode = stat.S_IMODE(os.lstat(destination).st_mode)
+                # XXX Remove me: older versions of derex set a non-writable permission
+                # for their files. This except branch is needed now (Easter 2020), but
+                # when the pandemic is over we can probably remove it
+                destination.chmod(current_mode | 0o700)
+                destination.write_text(source_code.read_text())
 
     tmpl = Template(template_compose_path.read_text())
     text = tmpl.render(
