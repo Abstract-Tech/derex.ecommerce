@@ -3,7 +3,7 @@ import os
 from ecommerce_worker.configuration.base import *
 
 
-ECOMMERCE_API_ROOT = os.environ.get("ECOMMERCE_API_ROOT", "http://ecommerce:4900/api/v2/")
+ECOMMERCE_API_ROOT = os.environ.get("ECOMMERCE_API_ROOT", "http://ecommerce.{}.localhost/api/v2/").format(DEREX_PROJECT)
 
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "lms-secret")
 

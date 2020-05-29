@@ -19,7 +19,7 @@ jobs:
       - script: |
           set -ex
           cd tests/fixtures/complete/
-          derex reset-mysql
+          derex mysql reset --force
           derex ecommerce reset-mysql
           derex ecommerce load-fixtures
         displayName: "Prime Mysql"
@@ -41,7 +41,7 @@ jobs:
       - script: |
           set -ex
           COUNT=$(
-            curl -sf http://localhost:4900/health/ \
+            curl -sf http://ecommerce.complete.localhost/health/ \
               --connect-timeout 30 \
               --retry 5 \
               --retry-delay 5 \

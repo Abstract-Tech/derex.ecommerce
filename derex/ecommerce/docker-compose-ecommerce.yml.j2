@@ -17,11 +17,11 @@ services:
       {% endif %}
     {% if project.runmode.value == "debug" -%}
     command:
-      sh -c 'exec ./manage.py runserver --noreload 0:4900'
+      sh -c 'exec ./manage.py runserver --noreload 0:80'
     {% else -%}
     command:
       sh -c 'exec gunicorn
-        --bind=0.0.0.0:4900
+        --bind=0.0.0.0:80
         --workers 2
         --max-requests=1000
         ecommerce.wsgi_whitenoise:application'
@@ -29,16 +29,15 @@ services:
     environment:
       SERVICE_VARIANT: ecommerce
       DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ active_settings }}
-      MYSQL_DB_NAME: "{{ project.name }}_ecommerce"
+      MYSQL_DB_NAME: {{ project.name }}_ecommerce
+      DEREX_PROJECT: {{ project.name }}
       {%- for key, value in project.get_container_env().items() %}
       {{ key }}: {{ value | tojson }}
       {%- endfor %}
-    ports:
-      - 4900:4900
     networks:
       derex:
         aliases:
-          - ecommerce.localhost
+          - ecommerce.localhost.derex
 
   ecommerce_worker:
     image: derex/ecommerce-worker:ironwood

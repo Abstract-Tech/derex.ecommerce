@@ -3,7 +3,7 @@
     "model": "sites.site",
     "pk": 1,
     "fields": {
-        "domain": "localhost:4900",
+        "domain": "ecommerce.minimal.localhost",
         "name": "example.com"
     }
 }

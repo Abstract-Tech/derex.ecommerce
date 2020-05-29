@@ -1,4 +1,4 @@
 ---
-project_name: ecommerce_minimal
+project_name: ecommerce-minimal
 plugins:
   derex.ecommerce: {}
