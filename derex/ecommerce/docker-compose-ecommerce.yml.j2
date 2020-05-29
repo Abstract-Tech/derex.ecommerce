@@ -37,7 +37,7 @@ services:
     networks:
       derex:
         aliases:
-          - ecommerce.localhost.derex
+          - ecommerce.{{ project.name }}.localhost.derex
 
   ecommerce_worker:
     image: derex/ecommerce-worker:ironwood

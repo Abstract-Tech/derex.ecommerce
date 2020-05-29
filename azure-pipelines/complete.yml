@@ -41,7 +41,7 @@ jobs:
       - script: |
           set -ex
           COUNT=$(
-            curl -sf http://ecommerce.complete.localhost/health/ \
+            curl -sf http://ecommerce.ecommerce-complete.localhost/health/ \
               --connect-timeout 30 \
               --retry 5 \
               --retry-delay 5 \
