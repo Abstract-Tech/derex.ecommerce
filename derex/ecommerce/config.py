@@ -90,7 +90,7 @@ def generate_local_docker_compose(project: Project) -> Path:
 class EcommerceService:
     @staticmethod
     @runner.hookimpl
-    def local_compose_options(
+    def ddc_project_options(
         project: Project,
     ) -> Optional[Dict[str, Union[str, List[str]]]]:
         if "derex.ecommerce" in project.config.get("plugins", {}):
@@ -99,7 +99,7 @@ class EcommerceService:
             return {
                 "options": options,
                 "name": "ecommerce",
-                "priority": "<local-derex",
+                "priority": "_end",
                 "variant": "openedx",
             }
         return None
