@@ -99,7 +99,6 @@ class EcommerceService:
             return {
                 "options": options,
                 "name": "ecommerce",
-                "priority": "_end",
-                "variant": "openedx",
+                "priority": "<local-project",
             }
         return None
