@@ -21,9 +21,8 @@ steps:
       pip3 install -U pip setuptools
       sudo mkdir /etc/derex/
       echo ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ | sudo tee /etc/derex/main_secret
-      [ -z "${{ parameters.PIN_VERSIONS }}" ] && pip3 install -r requirements_dev.txt .
+      [ -z "${{ parameters.PIN_VERSIONS }}" ] && pip3 install -r requirements.txt .
       [ ! -z "${{ parameters.PIN_VERSIONS }}" ] && pip3 install . https://github.com/Abstract-Tech/derex.runner/tarball/master#egg=derex.runner
-      true
     displayName: 'Install derex.runner'
 
   - script: ddc-services up -d
