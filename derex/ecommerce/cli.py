@@ -23,7 +23,7 @@ def ecommerce(ctx):
 def reset_mysql_cmd(project):
     """Reset the ecommerce mysql database"""
     from derex.runner.ddc import run_ddc_project
-    from derex.runner.docker import check_services
+    from derex.runner.docker_utils import check_services
     from derex.runner.mysql import wait_for_mysql
 
     if project.runmode is not ProjectRunMode.debug:
