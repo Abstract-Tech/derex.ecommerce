@@ -55,10 +55,10 @@ RUN mkdir -p /openedx/themes
 RUN echo "{}" > /openedx/config.yml
 ENV ECOMMERCE_CFG /openedx/config.yml
 
-EXPOSE 4900
+EXPOSE 80
 COPY ./wsgi_whitenoise.py ./ecommerce/wsgi_whitenoise.py
 CMD gunicorn \
-    --bind=0.0.0.0:4900 \
+    --bind=0.0.0.0:80 \
     --workers 2 \
     --max-requests=1000 \
     ecommerce.wsgi_whitenoise:application

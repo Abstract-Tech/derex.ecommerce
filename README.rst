@@ -13,9 +13,15 @@ Derex Plugin to integrate Open edX Ecommerce
 Setup
 -----
 
-* Install this package inside a derex project environment
-* Add to the project derex.config.yaml ::
+* Install this package with pip
 
+.. code-block:: bash
+
+    pip install "git+https://github.com/Abstract-Tech/derex.ecommerce.git#egg=derex.ecommerce"
+
+* Add to the project derex.config.yaml
+
+.. code-block:: yaml
 
     plugins:
       derex.ecommerce: {}

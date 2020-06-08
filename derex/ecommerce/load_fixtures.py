@@ -9,10 +9,12 @@ def main():
     if FIXTURES_DIR.isdir():
         # We sort lexicographically by file name
         # to make predictable ordering possible
-        for file in sorted(FIXTURES_DIR.listdir()):
-            print('Loading fixture "{}"'.format(file))
-            path("/openedx/ecommerce").chdir()
-            os.system("./manage.py loaddata {}".format(file))
+        files = " ".join(map(str, sorted(FIXTURES_DIR.listdir())))
+        print('Loading fixtures "{}"'.format(files))
+        path("/openedx/ecommerce").chdir()
+        res = os.system("./manage.py loaddata {}".format(files))
+        if res != 0:
+            raise RuntimeError
 
 
 if __name__ == "__main__":

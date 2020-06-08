@@ -13,6 +13,7 @@ from ecommerce.settings.base import (COMPREHENSIVE_THEME_DIRS, INSTALLED_APPS,
 ALLOWED_HOSTS = ["*"]
 TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en")
+DEREX_PROJECT = os.environ["DEREX_PROJECT"]
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "replace-me")
 EDX_API_KEY = os.environ.get("EDX_API_KEY", "replace-me")
@@ -50,10 +51,10 @@ SOCIAL_AUTH_EDX_OIDC_SECRET = os.environ.get(
     "SOCIAL_AUTH_EDX_OIDC_SECRET", "ecommerce-secret"
 )
 SOCIAL_AUTH_EDX_OIDC_ID_TOKEN_DECRYPTION_KEY = SOCIAL_AUTH_EDX_OIDC_SECRET
-SOCIAL_AUTH_EDX_OIDC_ISSUER = "http://lms.localhost:4700/oauth2"
-SOCIAL_AUTH_EDX_OIDC_URL_ROOT = "http://lms.localhost:4700/oauth2"
-SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT = "http://lms.localhost:4700/oauth2"
-SOCIAL_AUTH_EDX_OIDC_LOGOUT_URL = "http://lms.localhost:4700/logout"
+SOCIAL_AUTH_EDX_OIDC_ISSUER = "http://{}.localhost/oauth2".format(DEREX_PROJECT)
+SOCIAL_AUTH_EDX_OIDC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_ISSUER
+SOCIAL_AUTH_EDX_OIDC_PUBLIC_URL_ROOT = SOCIAL_AUTH_EDX_OIDC_ISSUER
+SOCIAL_AUTH_EDX_OIDC_LOGOUT_URL = "http://{}.localhost/logout".format(DEREX_PROJECT)
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 
 JWT_AUDIENCE = os.environ.get("JWT_AUDIENCE", "lms-key")
@@ -93,7 +94,7 @@ BROKER_URL = "{0}://{1}:{2}@{3}/{4}".format(
 )
 
 # Discovery
-COURSE_CATALOG_API_URL = "http://discovery.localhost:4910/api/v1/"
+COURSE_CATALOG_API_URL = "http://discovery.{}.localhost/api/v1/".format(DEREX_PROJECT)
 
 if "runserver" in sys.argv:
     DEBUG = True

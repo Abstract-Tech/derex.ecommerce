@@ -3,7 +3,6 @@ import os
 
 import click
 from derex.runner.cli import ensure_project
-from derex.runner.compose_utils import run_compose
 from derex.runner.project import ProjectRunMode
 from derex.runner.utils import abspath_from_egg
 
@@ -23,8 +22,9 @@ def ecommerce(ctx):
 @ensure_project
 def reset_mysql_cmd(project):
     """Reset the ecommerce mysql database"""
-    from derex.runner.docker import check_services
-    from derex.runner.docker import wait_for_mysql
+    from derex.runner.ddc import run_ddc_project
+    from derex.runner.docker_utils import check_services
+    from derex.runner.mysql import wait_for_mysql
 
     if project.runmode is not ProjectRunMode.debug:
         click.get_current_context().fail(
@@ -40,7 +40,7 @@ def reset_mysql_cmd(project):
     restore_dump_path = abspath_from_egg(
         "derex.ecommerce", "derex/ecommerce/restore_dump.py"
     )
-    run_compose(
+    run_ddc_project(
         [
             "run",
             "--rm",
@@ -60,7 +60,7 @@ def reset_mysql_cmd(project):
 @ensure_project
 def compile_theme(project):
     """Compile the ecommerce theme sass files"""
-    from derex.runner.compose_utils import run_compose
+    from derex.runner.ddc import run_ddc_project
 
     if project.runmode is not ProjectRunMode.debug:
         click.get_current_context().fail(
@@ -82,7 +82,7 @@ def compile_theme(project):
             python manage.py update_assets --skip-collect --themes {themes}
             chown {uid}:{uid} /openedx/themes/* -R""",
     ]
-    run_compose(args, project=project)
+    run_ddc_project(args, project=project)
     return
 
 
@@ -92,7 +92,7 @@ def compile_theme(project):
 @ensure_project
 def load_fixtures(project):
     """Load fixtures from the plugin fixtures directory"""
-    from derex.runner.compose_utils import run_compose
+    from derex.runner.ddc import run_ddc_project
 
     fixtures_dir = project.get_plugin_directories(__package__).get("fixtures")
     if fixtures_dir is None:
@@ -111,5 +111,5 @@ def load_fixtures(project):
         "python",
         "/openedx/ecommerce/load_fixtures.py",
     ]
-    run_compose(compose_args, project=project)
+    run_ddc_project(compose_args, project=project)
     return

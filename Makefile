@@ -1,4 +1,4 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help requirements.txt requirements_dev.txt
+.PHONY: clean clean-test clean-pyc clean-build docs help requirements
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -86,8 +86,8 @@ install: clean ## install the package to the active Python's site-packages
 
 requirements: requirements.txt requirements_dev.txt  ## rebuild requirement files
 
-requirements.txt:
+requirements.txt: requirements.in
 	pip-compile requirements.in
 
-requirements_dev.txt:
+requirements_dev.txt: requirements_dev.in requirements.txt
 	pip-compile requirements_dev.in
