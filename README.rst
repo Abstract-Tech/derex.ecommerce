@@ -3,9 +3,9 @@ Derex Ecommerce
 ===========
 
 
-.. image:: https://dev.azure.com/abstract-technology/derex.ecommerce/_apis/build/status/Abstract-Tech.derex.ecommerce?branchName=master
+.. image:: https://dev.azure.com/abstract-technology/derex/_apis/build/status/Abstract-Tech.derex.ecommerce?branchName=master
     :target: https://dev.azure.com/abstract-technology/derex.ecommerce/_build
-
+    :alt: Test results
 
 Derex Plugin to integrate Open edX Ecommerce
 
