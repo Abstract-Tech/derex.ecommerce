@@ -15,14 +15,14 @@ click-plugins==1.1.1      # via derex.runner
 click==7.0                # via click-plugins, derex.runner
 colorama==0.4.3           # via rich
 commonmark==0.9.1         # via rich
-cryptography==2.8         # via paramiko
+cryptography==3.2         # via paramiko
 https://github.com/Abstract-Tech/derex.runner/tarball/e83b019be5db61a71f8f7350d02bae0baf0f3926#egg=derex.runner  # via -r requirements.in
 docker-compose==1.25.4    # via derex.runner
 docker[ssh]==4.1.0        # via docker-compose
 dockerpty==0.4.1          # via docker-compose
 docopt==0.6.2             # via docker-compose
 idna==2.8                 # via requests
-importlib-metadata==1.4.0  # via derex.runner, jsonschema, pluggy
+importlib-metadata==1.4.0  # via derex.runner
 jinja2==2.10.3            # via -r requirements.in, derex.runner
 jsonschema==3.2.0         # via docker-compose
 markupsafe==1.1.1         # via jinja2
