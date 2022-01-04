@@ -32,7 +32,7 @@ commonmark==0.9.1
     # via rich
 cryptography==36.0.1
     # via paramiko
-derex.runner @ https://github.com/Abstract-Tech/derex.runner/tarball/v0.3.3
+derex.runner @ https://github.com/Abstract-Tech/derex.runner/tarball/v0.3.3.dev1
     # via -r requirements.in
 distro==1.6.0
     # via docker-compose
