@@ -1,33 +1,46 @@
+from derex import runner  # type: ignore
+from derex.ecommerce import __version__
+from derex.ecommerce.constants import DDC_PROJECT_TEMPLATE_PATH
+from derex.ecommerce.constants import DEREX_ECOMMERCE_DJANGO_SETTINGS_PATH
+from derex.ecommerce.constants import EcommerceVersions
+from derex.runner.project import Project
+from jinja2 import Template
+from pathlib import Path
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
+
 import logging
 import os
 import stat
-from pathlib import Path
-from typing import Dict, List, Optional, Union
 
-from derex import runner  # type: ignore
-from derex.runner.project import Project
-from derex.runner.utils import abspath_from_egg
-from jinja2 import Template
 
 logger = logging.getLogger(__name__)
 
 
 def generate_local_docker_compose(project: Project) -> Path:
-    """TODO: Interim function waiting to be refactored into derex.runner
-    """
+    """TODO: Interim function waiting to be refactored into derex.runner"""
     local_compose_path = project.private_filepath("docker-compose-ecommerce.yml")
-    template_compose_path = abspath_from_egg(
-        "derex.ecommerce", "derex/ecommerce/docker-compose-ecommerce.yml.j2"
-    )
     plugin_directories = project.get_plugin_directories(__package__)
-    our_settings_dir = abspath_from_egg(
-        "derex.ecommerce", "derex/ecommerce/settings/README.rst"
-    ).parent
+    derex_settings_dir = DEREX_ECOMMERCE_DJANGO_SETTINGS_PATH
+    settings_dir = derex_settings_dir
+    active_settings = "default"
 
-    settings_dir = our_settings_dir / "derex"
-    active_settings = "base"
+    ecommerce_version = EcommerceVersions[project.openedx_version.name]
+    default_ecommerce_docker_image_prefix = ecommerce_version.value[
+        "docker_image_prefix"
+    ]
+    default_ecommerce_worker_docker_image_prefix = ecommerce_version.value[
+        "worker_docker_image_prefix"
+    ]
     ecommerce_docker_image = project.config.get(
-        "ecommerce_docker_image", "derex/ecommerce:ironwood"
+        "ecommerce_docker_image",
+        f"{default_ecommerce_docker_image_prefix}:{__version__}",
+    )
+    ecommerce_worker_docker_image = project.config.get(
+        "ecommerce_worker_docker_image",
+        f"{default_ecommerce_worker_docker_image_prefix}:{__version__}",
     )
 
     if plugin_directories.get("settings"):
@@ -47,41 +60,47 @@ def generate_local_docker_compose(project: Project) -> Path:
         # if they are not present
         base_settings = settings_dir / "base.py"
         if not base_settings.is_file():
-            base_settings.write_text("from .derex import *\n")
+            base_settings.write_text(
+                "from ecommerce_django.settings.default import *\n"
+            )
 
         init = settings_dir / "__init__.py"
         if not init.is_file():
             init.write_text('"""Settings for edX Ecommerce Service"""')
 
-        for source_code in our_settings_dir.glob("**/*.py"):
-            destination = settings_dir / source_code.relative_to(our_settings_dir)
-            if (
-                destination.is_file()
-                and destination.read_text() != source_code.read_text()
-            ):
-                # TODO: Replace this warning with a call to a derex.runner
-                # function which should take care of updating settings
-                logger.warning(f"WARNING: Settings modified at {destination}")
+        if project.materialize_derex_settings:
+            for source_code in derex_settings_dir.glob("**/*.py"):
+                destination = (
+                    settings_dir / "derex" / source_code.relative_to(derex_settings_dir)
+                )
+                if (
+                    destination.is_file()
+                    and destination.read_text() != source_code.read_text()
+                ):
+                    # TODO: Replace this warning with a call to a derex.runner
+                    # function which should take care of updating settings
+                    logger.warning(f"WARNING: Settings modified at {destination}")
 
-            if not destination.parent.is_dir():
-                destination.parent.mkdir(parents=True)
-            try:
-                destination.write_text(source_code.read_text())
-            except PermissionError:
-                current_mode = stat.S_IMODE(os.lstat(destination).st_mode)
-                # XXX Remove me: older versions of derex set a non-writable permission
-                # for their files. This except branch is needed now (Easter 2020), but
-                # when the pandemic is over we can probably remove it
-                destination.chmod(current_mode | 0o700)
-                destination.write_text(source_code.read_text())
+                if not destination.parent.is_dir():
+                    destination.parent.mkdir(parents=True)
+                try:
+                    destination.write_text(source_code.read_text())
+                except PermissionError:
+                    current_mode = stat.S_IMODE(os.lstat(destination).st_mode)
+                    # XXX Remove me: older versions of derex set a non-writable permission
+                    # for their files. This except branch is needed now (Easter 2020), but
+                    # when the pandemic is over we can probably remove it
+                    destination.chmod(current_mode | 0o700)
+                    destination.write_text(source_code.read_text())
 
-    tmpl = Template(template_compose_path.read_text())
+    tmpl = Template(DDC_PROJECT_TEMPLATE_PATH.read_text())
     text = tmpl.render(
         project=project,
         plugins_dirs=plugin_directories,
         settings_dir=settings_dir,
         active_settings=active_settings,
         ecommerce_docker_image=ecommerce_docker_image,
+        ecommerce_worker_docker_image=ecommerce_worker_docker_image,
     )
     local_compose_path.write_text(text)
     return local_compose_path

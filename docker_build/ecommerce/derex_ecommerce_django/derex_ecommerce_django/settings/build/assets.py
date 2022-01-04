@@ -1,4 +1,9 @@
-from .base import *
+"""
+Bare minimum settings for collecting static assets
+"""
+
+from ecommerce.settings.base import *
+
 
 STATIC_ROOT = "/openedx/staticfiles"
 

@@ -1,0 +1,4 @@
+[flake8]
+per-file-ignores =
+    docker_build/ecommerce/derex_ecommerce_django/derex_ecommerce_django/settings/**/*.py:F821,F401,F403,F405,E266
+    docker_build/ecommerce_worker/settings.py:F821,F401,F403,F405,E266
