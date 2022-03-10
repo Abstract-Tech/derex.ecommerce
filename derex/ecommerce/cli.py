@@ -79,7 +79,7 @@ def compile_theme(project):
             python manage.py update_assets --skip-collect --themes {themes}
             chown {uid}:{uid} /openedx/themes/* -R""",
     ]
-    run_ddc_project(compose_args, "project", project)
+    run_ddc_project(compose_args, project)
     return
 
 
