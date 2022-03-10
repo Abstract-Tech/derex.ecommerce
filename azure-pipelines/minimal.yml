@@ -6,7 +6,7 @@ jobs:
   - job: Minimal${{ parameters.JOB_VARIANT }}
     timeoutInMinutes: 40
     pool:
-      vmImage: "ubuntu-latest"
+      vmImage: $(UBUNTU_VERSION)
     steps:
       - template: setup.yml
         parameters:
@@ -14,7 +14,7 @@ jobs:
 
       - script: |
           set -ex
-          cd tests/fixtures/minimal/
+          cd examples/ironwood/minimal/
           derex mysql reset --force
           derex ecommerce reset-mysql
           derex ecommerce load-fixtures
@@ -22,7 +22,7 @@ jobs:
 
       - script: |
           set -ex
-          cd tests/fixtures/minimal/
+          cd examples/ironwood/minimal/
           derex runmode production
           ddc-project config
           ddc-project up -d lms ecommerce ecommerce_worker
@@ -30,7 +30,7 @@ jobs:
 
       - script: |
           set -ex
-          cd tests/fixtures/minimal/
+          cd examples/ironwood/minimal/
           ddc-project logs
         displayName: "Show logs"
 
