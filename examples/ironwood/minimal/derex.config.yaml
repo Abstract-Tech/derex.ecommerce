@@ -1,0 +1,4 @@
+project_name: ecommerce-minimal
+openedx_version: ironwood
+plugins:
+  derex.ecommerce: {}

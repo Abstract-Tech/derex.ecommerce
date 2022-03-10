@@ -1,6 +1,6 @@
-* Derex Ecommerce version:
-* Python version:
-* Operating System:
+- Derex Ecommerce version:
+- Python version:
+- Operating System:
 
 ### Description
 

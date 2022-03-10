@@ -30,6 +30,7 @@ services:
       SERVICE_VARIANT: ecommerce
       DJANGO_SETTINGS_MODULE: ecommerce.settings.derex_project.{{ active_settings }}
       MYSQL_DB_NAME: {{ project.name }}_ecommerce
+      MYSQL_DB_PASSWORD: {{ project.secret("mysql") }}
       DEREX_PROJECT: {{ project.name }}
       {%- for key, value in project.get_container_env().items() %}
       {{ key }}: {{ value | tojson }}
@@ -38,12 +39,14 @@ services:
       derex:
         aliases:
           - ecommerce.{{ project.name }}.localhost.derex
+          - ecommerce.{{ project.name }}.localhost
 
   ecommerce_worker:
-    image: derex/ecommerce-worker:ironwood
+    image: {{ ecommerce_worker_docker_image }}
     container_name: "{{ project.name }}_ecommerce_worker"
     environment:
       C_FORCE_ROOT: 1
+      DEREX_PROJECT: {{ project.name }}
     networks:
       derex:
 
@@ -54,10 +57,9 @@ services:
     networks:
       derex:
         aliases:
-          - lms.localhost
-
+          - {{ project.name }}.localhost
   cms:
     networks:
       derex:
         aliases:
-          - cms.localhost
+          - studio.{{ project.name }}.localhost

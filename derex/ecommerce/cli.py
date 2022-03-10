@@ -1,10 +1,15 @@
+from derex.ecommerce import __version__
+from derex.ecommerce.constants import EcommerceVersions
+from derex.runner.cli import ensure_project
+from derex.runner.cli.build import build as derex_build_cli
+from derex.runner.docker_utils import buildx_image
+from derex.runner.project import ProjectRunMode
+from derex.runner.utils import abspath_from_egg
+
+import click
 import logging
 import os
 
-import click
-from derex.runner.cli import ensure_project
-from derex.runner.project import ProjectRunMode
-from derex.runner.utils import abspath_from_egg
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +17,7 @@ logger = logging.getLogger(__name__)
 @click.group()
 @click.pass_context
 def ecommerce(ctx):
-    """Derex edX Ecommerce plugin: commands to manage the Open edX Ecommerce service
-    """
+    """Derex edX Ecommerce plugin: commands to manage the Open edX Ecommerce service"""
     pass
 
 
@@ -23,20 +27,13 @@ def ecommerce(ctx):
 def reset_mysql_cmd(project):
     """Reset the ecommerce mysql database"""
     from derex.runner.ddc import run_ddc_project
-    from derex.runner.docker_utils import check_services
-    from derex.runner.mysql import wait_for_mysql
+    from derex.runner.docker_utils import wait_for_service
 
     if project.runmode is not ProjectRunMode.debug:
         click.get_current_context().fail(
             "This command can only be run in `debug` runmode"
         )
-    if not check_services(["mysql"]):
-        click.echo(
-            "Mysql service not found.\nMaybe you forgot to run\nddc-services up -d"
-        )
-        return
-
-    wait_for_mysql()
+    wait_for_service("mysql")
     restore_dump_path = abspath_from_egg(
         "derex.ecommerce", "derex/ecommerce/restore_dump.py"
     )
@@ -50,7 +47,7 @@ def reset_mysql_cmd(project):
             "python",
             "/openedx/ecommerce/restore_dump.py",
         ],
-        project=project,
+        project,
     )
     return 0
 
@@ -72,7 +69,7 @@ def compile_theme(project):
         return
     themes = " ".join(el.name for el in themes_dir.iterdir())
     uid = os.getuid()
-    args = [
+    compose_args = [
         "run",
         "--rm",
         "ecommerce",
@@ -82,7 +79,7 @@ def compile_theme(project):
             python manage.py update_assets --skip-collect --themes {themes}
             chown {uid}:{uid} /openedx/themes/* -R""",
     ]
-    run_ddc_project(args, project=project)
+    run_ddc_project(compose_args, project)
     return
 
 
@@ -111,5 +108,91 @@ def load_fixtures(project):
         "python",
         "/openedx/ecommerce/load_fixtures.py",
     ]
-    run_ddc_project(compose_args, project=project)
+    run_ddc_project(compose_args, project)
     return
+
+
+@derex_build_cli.command("ecommerce")
+@click.argument(
+    "version",
+    type=click.Choice(EcommerceVersions.__members__),
+    required=True,
+    callback=lambda _, __, value: value and EcommerceVersions[value],
+)
+@click.option(
+    "--only-print-image-tag",
+    is_flag=True,
+    default=False,
+    help="Only print the tag which will be assigned to the image",
+)
+def ecommerce_build(version, only_print_image_tag):
+    """Build ecommerce image using docker BuildKit."""
+    dockerfile_dir = abspath_from_egg(
+        "derex.ecommerce", "docker_build/ecommerce/Dockerfile"
+    ).parent
+    dockerfile_text = (dockerfile_dir / "Dockerfile").read_text()
+    build_args = {}
+    for spec in version.value.items():
+        build_args[spec[0].upper()] = spec[1]
+    docker_image_prefix = version.value["docker_image_prefix"]
+    image_tag = f"{docker_image_prefix}:{__version__}"
+    cache_tag = f"{docker_image_prefix}:cache"
+    if only_print_image_tag:
+        click.echo(image_tag)
+        return
+    buildx_image(
+        dockerfile_text=dockerfile_text,
+        paths=[dockerfile_dir],
+        target="base",
+        output="docker",
+        tags=[image_tag],
+        pull=False,
+        cache=True,
+        cache_to=False,
+        cache_from=False,
+        cache_tag=cache_tag,
+        build_args=build_args,
+    )
+
+
+@derex_build_cli.command("ecommerce-worker")
+@click.argument(
+    "version",
+    type=click.Choice(EcommerceVersions.__members__),
+    required=True,
+    callback=lambda _, __, value: value and EcommerceVersions[value],
+)
+@click.option(
+    "--only-print-image-tag",
+    is_flag=True,
+    default=False,
+    help="Only print the tag which will be assigned to the image",
+)
+def ecommerce_worker_build(version, only_print_image_tag):
+    """Build ecommerce image using docker BuildKit."""
+    dockerfile_dir = abspath_from_egg(
+        "derex.ecommerce", "docker_build/ecommerce_worker/Dockerfile"
+    ).parent
+    dockerfile_text = (dockerfile_dir / "Dockerfile").read_text()
+    build_args = {}
+    for spec in version.value.items():
+        build_args[spec[0].upper()] = spec[1]
+    docker_image_prefix = version.value["worker_docker_image_prefix"]
+    image_tag = f"{docker_image_prefix}:{__version__}"
+    cache_tag = f"{docker_image_prefix}:cache"
+    if only_print_image_tag:
+        click.echo(image_tag)
+        return
+    buildx_image(
+        dockerfile_text=dockerfile_text,
+        paths=[dockerfile_dir],
+        target="base",
+        output="docker",
+        tags=[image_tag],
+        pull=False,
+        cache=True,
+        cache_to=False,
+        cache_from=False,
+        cache_tag=cache_tag,
+        build_args=build_args,
+    )

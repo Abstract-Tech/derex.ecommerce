@@ -105,3 +105,6 @@ ENV/
 
 # IDE settings
 .vscode/
+
+# Derex project generated files folder
+.derex

@@ -1,0 +1,31 @@
+[
+  {
+    "model": "oauth2_provider.application",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "name": "ecommerce-sso",
+      "redirect_uris": "http://ecommerce.ecommerce-koa-minimal.localhost/complete/edx-oauth2/",
+      "client_id": "lms-ecommerce-sso-key",
+      "client_secret": "lms-ecommerce-sso-secret",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "created": "2021-12-09T19:32:06.623Z",
+      "updated": "2021-12-09T19:32:06.623Z"
+    }
+  },
+  {
+    "model": "oauth2_provider.application",
+    "pk": 3,
+    "fields": {
+      "user": 1,
+      "name": "ecommerce-backend-service",
+      "client_id": "lms-ecommerce-backend-service-key",
+      "client_secret": "lms-ecommerce-backend-service-secret",
+      "client_type": "confidential",
+      "authorization_grant_type": "client-credentials",
+      "created": "2021-12-09T19:32:06.623Z",
+      "updated": "2021-12-09T19:32:06.623Z"
+    }
+  }
+]

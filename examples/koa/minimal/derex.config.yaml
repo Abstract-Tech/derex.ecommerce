@@ -1,0 +1,5 @@
+project_name: ecommerce-koa-minimal
+openedx_version: koa
+materialize_derex_settings: true
+plugins:
+  derex.ecommerce: {}
