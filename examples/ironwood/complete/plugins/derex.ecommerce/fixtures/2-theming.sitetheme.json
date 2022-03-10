@@ -1,0 +1,10 @@
+[
+  {
+    "model": "theming.sitetheme",
+    "pk": 1,
+    "fields": {
+      "site": 1,
+      "theme_dir_name": "derex-theme"
+    }
+  }
+]

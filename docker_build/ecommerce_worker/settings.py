@@ -1,4 +1,4 @@
-from ecommerce_worker.configuration.base import *
+from ecommerce_worker.configuration.base import *  # noqa
 
 import os
 

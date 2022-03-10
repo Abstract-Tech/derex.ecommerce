@@ -1,6 +1,7 @@
+from path import Path as path
+
 import os
 
-from path import Path as path
 
 FIXTURES_DIR = path("/openedx/fixtures/")
 

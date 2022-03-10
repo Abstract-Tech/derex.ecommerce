@@ -1,0 +1,16 @@
+[
+  {
+    "model": "oauth2.client",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "name": "ecommerce",
+      "url": "http://ecommerce.complete.localhost",
+      "redirect_uri": "http://ecommerce.complete.localhost/complete/edx-oidc/",
+      "client_id": "lms-key",
+      "client_secret": "lms-secret",
+      "client_type": 0,
+      "logout_uri": "http://ecommerce.complete.localhost/logout"
+    }
+  }
+]
