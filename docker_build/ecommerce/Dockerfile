@@ -41,7 +41,10 @@ RUN sed -i "s/mysql-python==1.2.5/mysqlclient/" requirements/production.txt
 # TODO: Build a different image for development
 RUN pip install -r requirements/dev.txt
 RUN pip install -r requirements.txt
-RUN pip install whitenoise
+
+# By default pick the latest version
+ARG WHITENOISE_VERSION=
+RUN pip install "whitenoise$WHITENOISE_VERSION"
 
 COPY ecommerce/derex_ecommerce_django/ /openedx/derex_ecommerce_django
 RUN pip install /openedx/derex_ecommerce_django
@@ -57,7 +60,7 @@ RUN --mount=type=tmpfs,target=/mysql/var/lib/mysql \
     echo -e '[mysqld]\nport=3399\ncollation-server = utf8_general_ci\ncharacter-set-server = utf8' >> /mysql/etc/mysql/conf.d/custom_port.cnf; \
     chroot /mysql /usr/local/bin/docker-entrypoint.sh mysqld > /mysql/mysqld.out & \
     until grep "MySQL init process done. Ready for start up" /mysql/mysqld.out ; do sleep 1; done; \
-    until chroot /mysql mysqladmin -P 3399 create ecommerce ; do sleep 1; done; \
+    until chroot /mysql mysqladmin -P 3399 create ecommerce; do sleep 1; done; \
     export DJANGO_SETTINGS_MODULE="derex_ecommerce_django.settings.build.migration"; \
     python manage.py migrate; \
     chroot /mysql mysqldump ecommerce | bzip2 -9 - > /openedx/empty_dump.sql.bz2;

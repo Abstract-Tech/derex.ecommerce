@@ -29,8 +29,9 @@ class EcommerceVersions(Enum):
         "ecommerce_release": "ironwood",
         "docker_image_prefix": "ghcr.io/abstract-tech/derex-ecommerce-ironwood",
         "worker_docker_image_prefix": "ghcr.io/abstract-tech/derex-ecommerce-worker-ironwood",
-        "alpine_version": "alpine3.13",
-        "python_version": "2.7.16",
+        "alpine_version": "alpine3.11",
+        "python_version": "2.7.18",
+        "whitenoise_version": "<5.0",
     }
     juniper = {
         "ecommerce_repository": "https://github.com/edx/ecommerce.git",
